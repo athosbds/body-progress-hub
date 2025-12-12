@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import auth, users
 from app.db.session import create_db_and_tables
+import os
 
 app = FastAPI(
     title="Muscle Up API",
@@ -11,9 +12,17 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
+if not allowed_origins or allowed_origins == [""]:
+    allowed_origins = [
+        "http://localhost:3000",
+        "https://muscle-up-frontend.vercel.app",
+        "https://muscle-up-frontend-*.vercel.app",
+    ]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
