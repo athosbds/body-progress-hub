@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../api/api";
 
 const LOCAL_USERS_KEY = "muscleup_users_v1";
 const LOCAL_SESSION_KEY = "muscleup_session_v1";
