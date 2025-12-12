@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import api from "../api/api";
 
+
+export const AuthContext = createContext();
+
 const LOCAL_USERS_KEY = "muscleup_users_v1";
 const LOCAL_SESSION_KEY = "muscleup_session_v1";
-
 
 function loadUsers() {
   try {
@@ -103,7 +105,6 @@ export function AuthProvider({ children }) {
       if (response && response.access_token) {
         localStorage.setItem("access_token", response.access_token);
         
-
         const userResponse = await api.get("/users/me");
         if (userResponse && userResponse.id) {
           const session = { 
@@ -114,7 +115,7 @@ export function AuthProvider({ children }) {
             bio: userResponse.bio
           };
           setUser(session);
-          localStorage.removeItem(LOCAL_SESSION_KEY); // Limpa sessão local
+          localStorage.removeItem(LOCAL_SESSION_KEY);
           return { ok: true, user: session };
         }
       }
@@ -150,7 +151,12 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }
+
 
 export default AuthContext;
